@@ -2,6 +2,8 @@
 
 gpkg city council precincts geoms and candidate assignment. might have at large data
 
+Working Report Link: https://docs.google.com/document/d/1VqDG7T1osMLAX2hxbx2l_WlVqGyNsUdRJpndx3jLob4/edit?usp=sharing
+
 # data preview
 ## denver_city_council.gpkg
 ```
