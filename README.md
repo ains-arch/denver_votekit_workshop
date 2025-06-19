@@ -160,3 +160,24 @@ memory usage: 43.2+ KB
 305        08        031  031230  08031031230      A  Denver 230  ...          N  421848        0  +39.6904954  -104.9551128  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00I\x00\x0...
 306        08        031  031237  08031031237      A  Denver 237  ...          N  906997        0  +39.6790394  -104.9634185  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00q\x00\x0...
 ```
+
+# next steps outline
+goal: data on city council districts
+- data we already have: demographics, election results by VTD
+- data we might be able to find: registration, gender
+- figure out what to do with the at large districts
+
+- find data by OG district from another source
+- find VTD -> OG district assignment in a csv somewhere
+- maup from precincts to OG districts using geometry we have
+- ensemble analysis to estimate demographic bloc populations
+    - for every map, for ever district in the map, compute demographic data
+
+then: ballot generator to say something about RCV outcomes
+- will have the number of blocs and bloc_prop
+- need to make a guess at cohesion, candidate strength, and candidate pool stuff
+
+look at:
+- election outcomes based on past elections
+- ... something about demographics
+- maybe something about partisan registration stuff if we found that data
