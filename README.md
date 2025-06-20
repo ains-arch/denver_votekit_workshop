@@ -181,3 +181,13 @@ look at:
 - election outcomes based on past elections
 - ... something about demographics
 - maybe something about partisan registration stuff if we found that data
+
+gerrychain
+- whip up 20 plans
+- calculate the pop/vap up from the precinct level to the districts (wvap and cvap)
+- citywide WVAP and CVAP needed, figure out the relevant turnout
+WVAP: 58.7, C-VAP 41.3
+relative rate of poc turnout: .732
+
+bloc sizes: use wvap as 1 and cvap as .732 times cvap
+toggle: do the 20 plans change outcomes
