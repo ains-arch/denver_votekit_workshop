@@ -57,7 +57,7 @@ While this project sheds light on how different electoral systems would have led
 ## References
 
 Denver City Government. n.d. “Denver City Government.” Denver City Government. Accessed June 19, 2025. https://www.denvergov.org/.
+
 Paolo Zialcita. 2025. “Denver City Council Debates Ranked-Choice Voting and Other Major Election Changes.” Denverite, June 2, 2025. https://denverite.com/2025/06/02/denver-city-council-ranked-choice-voting/.
+
 Sam Tabachnik. 2024. “Proposition 131: Colorado Voters Reject Ranked-Choice Voting, Election Overhaul.” The Denver Post, November 5, 2024. https://www.denverpost.com/2024/11/05/proposition-131-colorado-election-results/.
-
-
