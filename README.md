@@ -1,193 +1,65 @@
-11 city council members in precincts (2 at large)
+# VoteKit Workshop
+Case Study on Denver, Colorado
 
-gpkg city council precincts geoms and candidate assignment. might have at large data
+Prepared by: Ainslee Archibald, Bryan Huang, and Natasha Romero Moskala
 
-Working Report Link: https://docs.google.com/document/d/1VqDG7T1osMLAX2hxbx2l_WlVqGyNsUdRJpndx3jLob4/edit?usp=sharing
+## Background
 
-# data preview
-## denver_city_council.gpkg
-```
-<class 'geopandas.geodataframe.GeoDataFrame'>
-RangeIndex: 13 entries, 0 to 12
-Data columns (total 6 columns):
- #   Column    Non-Null Count  Dtype   
----  ------    --------------  -----   
- 0   DIST_NUM  11 non-null     float64 
- 1   DIST_REP  13 non-null     object  
- 2   NOTES     2 non-null      object  
- 3   GLOBALID  13 non-null     object  
- 4   URL_LINK  13 non-null     object  
- 5   geometry  13 non-null     geometry
-dtypes: float64(1), geometry(1), object(4)
-memory usage: 756.0+ bytes
-```
+With 13 districts, out of which 2 are at-large, Denver is exploring the idea of switching to a Ranked Choice Voting (RCV) election system. Ranked choice voting would allow voters to rank Denver city council candidates based on preference. After each round, the candidate with the fewest votes would be eliminated, and their support would be distributed to those who remain in the race. Because all 13 city council positions are up for election every four years, the ranked choice voting process would continue until 13 candidates cross the threshold (Denver City Government). In other words, the people of Denver would be able to voice their political opinions through voting without potentially “wasting” their vote. However, despite a push for a new local-level electoral system, RCV has a history of unpopularity in the state of Colorado. In 2024, 55.6% of Colorado voters rejected Proposition 131, which sought to establish ranked choice voting in state-level elections (Sam Tabachnik 2024). Even though the proposition did not pass at the state level, the city of Denver continues to push for RCV at the local level. 
 
-```
-   DIST_NUM         DIST_REP NOTES                                GLOBALID                              URL_LINK                                           geometry
-0       6.0    Paul Kashmann  None  {E32EE291-9AAF-4374-96DE-0C3CD04312FA}   https://www.denvergov.org/district6  MULTIPOLYGON (((3150429.065 1685445.781, 31504...
-1       9.0   Darrell Watson  None  {8B3BC287-A3E1-4549-827C-93A9F6E12D78}   https://www.denvergov.org/district9  MULTIPOLYGON (((3149277.482 1716097.796, 31486...
-2       1.0  Amanda Sandoval  None  {85225A22-4FDE-4332-9E19-7D1FE607274C}   https://www.denvergov.org/district1  MULTIPOLYGON (((3134585.633 1714580.431, 31343...
-3       2.0      Kevin Flynn  None  {F6CDE34C-3B1D-4B60-9B13-0C93DE2D7C82}   https://www.denvergov.org/district2  MULTIPOLYGON (((3133659.751 1676374.036, 31335...
-4      10.0      Chris Hinds  None  {7DCBE7AE-A755-4E8C-B950-5A9B4EE62C48}  https://www.denvergov.org/district10  MULTIPOLYGON (((3141333.769 1700874.412, 31412...
-```
+Support for the new electoral system is not homogeneous among elected officials in Denver, as members of the current city council are split on the idea of switching from a run-off system to a ranked-choice voting system. Council members Darrell Watson and Sarah Parady support the push to switch election systems in the city of Denver, arguing that it would incentivize younger voters to exercise their right to vote, particularly in local-level elections. Moreover, Watson and Parady argue that RCV would potentially bring election costs down, as it would eliminate the need for runoff elections (Paolo Zialcita 2025). However, other people from the city, including council member Amanda Sandoval, argue that an RCV system would be confusing, as it would be too different from state and federal election systems (Paolo Zialcita 2025). 
 
-## Denver_pop.parquet
-```
-<class 'pandas.core.frame.DataFrame'>
-Index: 346 entries, vtd:08031031241 to vtd:08031031827
-Data columns (total 7 columns):
- #   Column             Non-Null Count  Dtype
----  ------             --------------  -----
- 0   tot_pop_20         346 non-null    int64
- 1   bpop_20            346 non-null    int64
- 2   hpop_20            346 non-null    int64
- 3   asian_nhpi_pop_20  346 non-null    int64
- 4   amin_pop_20        346 non-null    int64
- 5   other_pop_20       346 non-null    int64
- 6   white_pop_20       346 non-null    int64
-dtypes: int64(7)
-memory usage: 21.6+ KB
-```
+Whether Colorado adopts an RCV system is up to Denverites to decide in an upcoming election. Notably, despite voters also deciding on whether the two council positions for Denver’s two districts at large should be split into two races or remain as is, this study will solely focus on the matter of implementing RCV in the city of Denver.
 
-```
-                 tot_pop_20  bpop_20  hpop_20  asian_nhpi_pop_20  amin_pop_20  other_pop_20  white_pop_20
-id                                                                                                       
-vtd:08031031241        1348       45      126                 58           11            17          1091
-vtd:08031031639        1383       12       67                 58           11            19          1216
-vtd:08031031229        1099       13       84                 54           17            11           920
-vtd:08031031230        1232       13       93                 90           13            12          1011
-vtd:08031031237        3273      249      315                322           33            36          2318
-```
+## Goals of the Study
+This report aims to understand how Instant-Runoff Voting (IRV)  might lead to different results than a plurality system, across multiple potential districting plans and varying turnout profiles. To explore and analyze the effect of RCV on Colorado’s City Council election results, we will use the software VoteKit in order to test election systems on demographic data at the precinct level provided by the Data and Democracy Lab.	
 
-## Denver_vap.parquet
-```
-<class 'pandas.core.frame.DataFrame'>
-Index: 346 entries, vtd:08031031241 to vtd:08031031827
-Data columns (total 7 columns):
- #   Column             Non-Null Count  Dtype
----  ------             --------------  -----
- 0   tot_vap_20         346 non-null    int64
- 1   bvap_20            346 non-null    int64
- 2   hvap_20            346 non-null    int64
- 3   asian_nhpi_vap_20  346 non-null    int64
- 4   amin_vap_20        346 non-null    int64
- 5   other_vap_20       346 non-null    int64
- 6   white_vap_20       346 non-null    int64
-dtypes: int64(7)
-memory usage: 21.6+ KB
-```
+Furthermore, in order to gain a better understanding of the sentiment towards RCV, and changing the current Denver election system, we also looked at local newspapers, which provided context as to the history of Ranked Choice Voting in the state of Colorado, as well as the opinions that sitting council members have voiced regarding the tentative change to the city’s voting system.
 
-```
-                 tot_vap_20  bvap_20  hvap_20  asian_nhpi_vap_20  amin_vap_20  other_vap_20  white_vap_20
-id                                                                                                       
-vtd:08031031241        1106       34       88                 40           10            15           919
-vtd:08031031639        1074       11       47                 38            5            15           958
-vtd:08031031229         853        8       61                 30           13             8           733
-vtd:08031031230         865        2       69                 33            4             5           752
-vtd:08031031237        3196      227      302                314           30            34          2289
-```
+## Study design
 
-## Denver_elections.parquet
-```
-<class 'pandas.core.frame.DataFrame'>
-Index: 346 entries, vtd:08031031241 to vtd:08031031827
-Data columns (total 16 columns):
- #   Column       Non-Null Count  Dtype
----  ------       --------------  -----
- 0   pres_08_dem  346 non-null    int64
- 1   pres_08_rep  346 non-null    int64
- 2   pres_12_dem  346 non-null    int64
- 3   pres_12_rep  346 non-null    int64
- 4   pres_16_dem  346 non-null    int64
- 5   pres_16_rep  346 non-null    int64
- 6   sen_16_dem   346 non-null    int64
- 7   sen_16_rep   346 non-null    int64
- 8   gov_18_dem   346 non-null    int64
- 9   gov_18_rep   346 non-null    int64
- 10  ag_18_dem    346 non-null    int64
- 11  ag_18_rep    346 non-null    int64
- 12  pres_20_dem  346 non-null    int64
- 13  pres_20_rep  346 non-null    int64
- 14  sen_20_dem   346 non-null    int64
- 15  sen_20_rep   346 non-null    int64
-dtypes: int64(16)
-memory usage: 46.0+ KB
-```
+Denver has 11 districts and 2 districts at large (Denver City Government). Thus, the city has a total of 13 city council members. With roughly 150,000 voters participating in the 2023 city council elections, the following candidates won the races for the 11 districts and 2 districts at large:Ddistrict 1: Amanda P. Sandoval, District 2: Kevin Flynn, District 3: Jamie Torres, District 4: Diana Romero Campbell, District 5: Amanda Sawyer, District 6: Paul Kashmann, District 7: Flor Alvidrez, District 8: Shontel M. Lewis, District 9: Darrell Watson, District 10: Chris Hinds, District 11: Stacie Gilmore, At-large Council Members: Serena Gonzales-Gutierrez and Sarah Parady.
 
-```
-                 pres_08_dem  pres_08_rep  pres_12_dem  pres_12_rep  pres_16_dem  pres_16_rep  ...  ag_18_dem  ag_18_rep  pres_20_dem  pres_20_rep  sen_20_dem  sen_20_rep
-VTD                                                                                            ...                                                                        
-vtd:08031031241          566          190          580          240          644          165  ...        621        179          751          207         740         235
-vtd:08031031639          637          253          601          357          677          217  ...        642        238          814          222         777         277
-vtd:08031031229          466          222          410          265          459          167  ...        466        215          605          171         582         216
-vtd:08031031230          432          231          454          271          502          195  ...        499        244          627          189         591         246
-vtd:08031031237          995          305         1079          421         1289          240  ...        869        153          895          138         848         166
+![Denver City Council Districts Map](districts.png)
 
-[5 rows x 16 columns]
-```
+*Figure 1. Denver City Council Districts*
 
-## Denver_precincts.parquet
-```
-<class 'pandas.core.frame.DataFrame'>
-Index: 346 entries, 302 to 647
-Data columns (total 15 columns):
- #   Column      Non-Null Count  Dtype 
----  ------      --------------  ----- 
- 0   STATEFP20   346 non-null    object
- 1   COUNTYFP20  346 non-null    object
- 2   VTDST20     346 non-null    object
- 3   GEOID20     346 non-null    object
- 4   VTDI20      346 non-null    object
- 5   NAME20      346 non-null    object
- 6   NAMELSAD20  346 non-null    object
- 7   LSAD20      346 non-null    object
- 8   MTFCC20     346 non-null    object
- 9   FUNCSTAT20  346 non-null    object
- 10  ALAND20     346 non-null    int64 
- 11  AWATER20    346 non-null    int64 
- 12  INTPTLAT20  346 non-null    object
- 13  INTPTLON20  346 non-null    object
- 14  geometry    346 non-null    object
-dtypes: int64(2), object(13)
-memory usage: 43.2+ KB
-```
+This study looked at bloc sizes of .66 and .34 for white and non-white people, respectively. Moreover, the parameters for white and nonwhite voting age population were .587 and .413. Thus, the relative rate of white voters that the study will be using is .732.
 
-```
-    STATEFP20 COUNTYFP20 VTDST20      GEOID20 VTDI20      NAME20  ... FUNCSTAT20 ALAND20 AWATER20   INTPTLAT20    INTPTLON20                                           geometry
-302        08        031  031241  08031031241      A  Denver 241  ...          N  531573        0  +39.6765106  -104.9809775  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00Z\x00\x0...
-303        08        031  031639  08031031639      A  Denver 639  ...          N  486619        0  +39.6965898  -104.9628491  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00>\x00\x0...
-304        08        031  031229  08031031229      A  Denver 229  ...          N  845123        0  +39.6895881  -104.9653561  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00d\x00\x0...
-305        08        031  031230  08031031230      A  Denver 230  ...          N  421848        0  +39.6904954  -104.9551128  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00I\x00\x0...
-306        08        031  031237  08031031237      A  Denver 237  ...          N  906997        0  +39.6790394  -104.9634185  b'\x01\x03\x00\x00\x00\x01\x00\x00\x00q\x00\x0...
-```
+|               | White (W) | Non-White (C) |
+|--------------|-----------|----------------|
+| White (W)    |    1      |      0.5       |
+| Non-White (C)|    2      |      0.5       |
 
-# next steps outline
-goal: data on city council districts
-- data we already have: demographics, election results by VTD
-- data we might be able to find: registration, gender
-- figure out what to do with the at large districts
+*Figure 2. Bloc Sizes Matrix*
 
-- find data by OG district from another source
-- find VTD -> OG district assignment in a csv somewhere
-- maup from precincts to OG districts using geometry we have
-- ensemble analysis to estimate demographic bloc populations
-    - for every map, for ever district in the map, compute demographic data
+We estimate cohesion within and between the blocs with the following parameters: 
 
-then: ballot generator to say something about RCV outcomes
-- will have the number of blocs and bloc_prop
-- need to make a guess at cohesion, candidate strength, and candidate pool stuff
+|               | White (W) | Non-White (C) |
+|--------------|-----------|----------------|
+| White (W)    |   0.75    |      0.25      |
+| Non-White (C)|   0.30    |      0.70      |
 
-look at:
-- election outcomes based on past elections
-- ... something about demographics
-- maybe something about partisan registration stuff if we found that data
+*Figure 3. Cohesion Matrix*
 
-gerrychain
-- whip up 20 plans
-- calculate the pop/vap up from the precinct level to the districts (wvap and cvap)
-- citywide WVAP and CVAP needed, figure out the relevant turnout
-WVAP: 58.7, C-VAP 41.3
-relative rate of poc turnout: .732
+Looking at candidate availability, this study bases its findings on the assumption that there were three white candidates and three non-white candidates in the single winner races.
 
-bloc sizes: use wvap as 1 and cvap as .732 times cvap
-toggle: do the 20 plans change outcomes
+For districting plans, we generated 20 random plans of 11 districts made up of precincts with Gerrychain, using a population tolerance of 5%. We then looked at the proportion of white and non-white voting age population for the districting plans. We found in our data that many of our 20x11 districts had nearly identical proportions, so to limit computation time, we rounded to two digits and thus collapsed our 220 proportions into just 30 unique proportions.
+
+## Results
+Our results show that, across 10 simulated elections for each of the 30 proportions, plurality and IRV methods result in similar proportionality for preferred candidates for voters of color. We calculated support by combining cohesion in the form of non-white voters voting for non-white preferred candidates, and crossover support from white voters voting for non-white preferred candidates. The proportion is the number of seats won by non-white preferred candidates over the ten simulated elections. These calculations were made using three voter behavior profiles in VoteKit.
+
+![Plurality Scatterplot. Shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](plurality-scatterplot.png)
+
+![IRV Scatterplot. Also shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](irv-scatterplot.png)
+
+## Conclusion
+While this project sheds light on how different electoral systems would have led to different election outcomes, more research should be done in order to understand the underlying needs of the people of Denver and which electoral system best fits their circumstances. Thus, future election system research should aim to collect and consider input from Denverites in order to make appropriate recommendations for a new electoral system in the city. Moreover, this project aims to serve as a resource for the people of Denver to explore how different electoral systems may impact election results in their particular district.
+
+## References
+
+Denver City Government. n.d. “Denver City Government.” Denver City Government. Accessed June 19, 2025. https://www.denvergov.org/.
+Paolo Zialcita. 2025. “Denver City Council Debates Ranked-Choice Voting and Other Major Election Changes.” Denverite, June 2, 2025. https://denverite.com/2025/06/02/denver-city-council-ranked-choice-voting/.
+Sam Tabachnik. 2024. “Proposition 131: Colorado Voters Reject Ranked-Choice Voting, Election Overhaul.” The Denver Post, November 5, 2024. https://www.denverpost.com/2024/11/05/proposition-131-colorado-election-results/.
+
+
