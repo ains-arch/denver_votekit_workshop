@@ -22,7 +22,7 @@ Denver has 11 districts and 2 districts at large (Denver City Government). Thus,
 
 ![Denver City Council Districts Map](districts.png)
 
-*Figure 1. Denver City Council Districts*
+### Bloc Sizes
 
 This study looked at bloc sizes of .66 and .34 for white and non-white people, respectively. Moreover, the parameters for white and nonwhite voting age population were .587 and .413. Thus, the relative rate of white voters that the study will be using is .732.
 
@@ -31,7 +31,7 @@ This study looked at bloc sizes of .66 and .34 for white and non-white people, r
 | White (W)    |    1      |      0.5       |
 | Non-White (C)|    2      |      0.5       |
 
-*Figure 2. Bloc Sizes Matrix*
+### Cohesion
 
 We estimate cohesion within and between the blocs with the following parameters: 
 
@@ -40,8 +40,6 @@ We estimate cohesion within and between the blocs with the following parameters:
 | White (W)    |   0.75    |      0.25      |
 | Non-White (C)|   0.30    |      0.70      |
 
-*Figure 3. Cohesion Matrix*
-
 Looking at candidate availability, this study bases its findings on the assumption that there were three white candidates and three non-white candidates in the single winner races.
 
 For districting plans, we generated 20 random plans of 11 districts made up of precincts with Gerrychain, using a population tolerance of 5%. We then looked at the proportion of white and non-white voting age population for the districting plans. We found in our data that many of our 20x11 districts had nearly identical proportions, so to limit computation time, we rounded to two digits and thus collapsed our 220 proportions into just 30 unique proportions.
@@ -49,9 +47,9 @@ For districting plans, we generated 20 random plans of 11 districts made up of p
 ## Results
 Our results show that, across 10 simulated elections for each of the 30 proportions, plurality and IRV methods result in similar proportionality for preferred candidates for voters of color. We calculated support by combining cohesion in the form of non-white voters voting for non-white preferred candidates, and crossover support from white voters voting for non-white preferred candidates. The proportion is the number of seats won by non-white preferred candidates over the ten simulated elections. These calculations were made using three voter behavior profiles in VoteKit.
 
-![Plurality Scatterplot. Shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](plurality-scatterplot.png)
+![Plurality Scatterplot. Shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](plurality_scatterplot.png)
 
-![IRV Scatterplot. Also shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](irv-scatterplot.png)
+![IRV Scatterplot. Also shows proportionality as combined support for non-white candidates increase, so do non-white candidate winners. no obvious pattern between cambridge, slate bt, and slate pl profiles.](irv_scatterplot.png)
 
 ## Conclusion
 While this project sheds light on how different electoral systems would have led to different election outcomes, more research should be done in order to understand the underlying needs of the people of Denver and which electoral system best fits their circumstances. Thus, future election system research should aim to collect and consider input from Denverites in order to make appropriate recommendations for a new electoral system in the city. Moreover, this project aims to serve as a resource for the people of Denver to explore how different electoral systems may impact election results in their particular district.
